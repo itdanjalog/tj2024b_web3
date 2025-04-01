@@ -30,6 +30,13 @@ public class ExamController {
     }
 
     // 4. D : 삭제
+    @DeleteMapping // http://localhost:8080/day01/jpa?id=1
+    public boolean delete( @RequestParam String id ){
+        boolean result =  examService.delete( id );
+        return result;
+    }
+
+
 }
 
 

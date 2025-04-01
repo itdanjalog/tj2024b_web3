@@ -54,15 +54,18 @@ public class ExamService {
         return false;
     }
 
-
-
-
-
-
-
-
-
-
-
+    // 삭제 :
+    public boolean delete( String id ){
+        examEntityRepository.deleteById( id );
+        return true;
+    }
 
 }
+
+
+
+
+
+
+
+

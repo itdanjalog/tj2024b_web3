@@ -24,6 +24,9 @@ public interface ExamEntityRepository
 //     : pk값과 일치하는 엔티티를 select 한다.
 //     반환값 : Optional< 엔티티 >
 
+// 4. .deleteById( 삭제할pk값 )
+//     : pk값과 일치하는 엔티티를 delete 한다.
+//     반환값 : void(없다)
 
 // Optional 클래스 : null 관련된 메소드 제공하는 클래스
 // -> nullPointerException 방지 하고자 객체를 포장하는 클래스
