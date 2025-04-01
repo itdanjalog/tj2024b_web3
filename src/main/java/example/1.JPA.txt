@@ -28,8 +28,65 @@
        등등
 
 [ JPA ]
-    java , persistence(영속성) , api
+    java , persistence(영속성/고집/집요하게계속하다.) , api
     1. 정의 : 자바에서 ORM을 사용할때 표준 API , 자바에서 ORM 어떻게 처리할지 정의한 라이브러리(인터페이스/어노테이션/클래스)
+    2. 사용법
+        1. 그레이들에 라이브러리 추가
+            implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        2. application.properties 설정 , ( JDBC 별도 )
+
+    3. JPA 설정
+        1. JPA DDL 자동 처리 설정 : spring.jpa.hibernate.ddl-auto = create/update/none/create-drop/validate
+            spring.jpa.hibernate.ddl-auto = create      : 서버가 실행 될때마다 기존 테이블 삭제하고 새로운 테이블 생성한다.[개발단계]
+            spring.jpa.hibernate.ddl-auto = update      : 서버가 실행 될대마다 기존 테이블 유지하고 변경/추가 사항이 있을경우 수정/생성한다.[배포단계]
+            spring.jpa.hibernate.ddl-auto = none        : 개발자가 직접 DDL 관리하겠다 (기본값)
+            spring.jpa.hibernate.ddl-auto = create-drop : 서버가 종료 될때마다 테이블 삭제한다.
+            spring.jpa.hibernate.ddl-auto = validate    : 서버가 실행 될때마다 엔티티 일치 여부 검사한다.
+        2. 콘솔에서 JPA가 자동으로 처리하는 SQL 확인
+            spring.jpa.show-sql = true                          : JPA 가 처리한 SQL 콘솔 표시
+            spring.jpa.properties.hibernate.format_sql = true   : SQL 콘솔을 형식에 맞게 변환
+            logging.level.org.hibernate.SQL = DEBUG             : JPA 가 처리한 SQL 디버그 콘솔 표시
+            logging.level.org.hibernate.orm.jdbc.bind = TRACE   : JPA 가 처리한 SQL 매개변수 콘솔 표시
+
+[ JPA 어노테이션 ]
+    1. 용어/관점
+        entity : DB테이블과 매핑된 객체(인스턴스)
+        클래스      <-----> DB의 테이블
+        인스턴스    <-----> 테이블의 레코드
+            => 예시 : 학생 클래스                          학생 테이블
+                      class 학생{                        table 학생(
+                          int 학번                            학번 int
+                          String 이름                         이름 varchar
+                      }                                 )
+                      학생 인스턴스1                       학생 레코드1
+                      new 학생(1 , 유재석)                insert into 학생 value( 1 , 유재석 );
+    2. 핵심
+        1. @Entity : 해당 클래스를 테이블과 매핑 정의
+        2. @Id : 엔티티 기본키( primary key ) 를 지정
+            - 모든 엔티티/테이블 은 1개 이상의 pk를 갖는다.
+            - JPA는 엔티티에 @Id 없으면 실행 조차 안된다.
+                has no identifier (every '@Entity' class must declare or inherit at least one '@Id' or '@EmbeddedId' property)
+        3. @Column : 엔티티의 속성 매핑
+            - 자동 타입 매칭
+            java        mysql
+            int         int         정수
+            String      varchar     문자열
+            double      float       실수
+            long        bigint
+                        longtext
+            3-1 : @Column( nullable = true )    : not null 제약조건
+                nullable = true(기본값)
+                nullable = false
+            3-2 : @Column( unique = false )     : unique 제약조건
+                unique = false(기본값)
+                unique = true
+            3-3 :  @Column( columnDefinition = "DB type") : DB type 직접 정의
+
+
+        4. @Table( name ="테이블명" )
+            - DB테이블명 정의한다.
+        5. @GeneratedValue( strategy = GenerationType.IDENTITY )
+            - auto_increment 지원 , @Id(pk) 와 같이 사용한다.
 
 
 
