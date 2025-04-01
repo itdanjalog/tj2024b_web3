@@ -4,8 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity@Table( name = "student1") // DB 테이블 매핑
+@Data // 롬복
 public class ExamEntity {
     // 1. 학번  , primary key
     @Id
