@@ -1,0 +1,11 @@
+JPA 엔티티 과제1 : 간단한 TODO 테이블 설계
+[ 조건 ] 1. 샘플 참고하여 엔티티(클래스) 로 테이블 생성하시오.
+[ 샘플 ]
+	create table task1todo(
+		id  int primary key auto_increment ,
+		title varchar(100) not null ,
+		state boolean not null ,
+		createat date not null ,
+		updateat datetime not null
+	)
+
