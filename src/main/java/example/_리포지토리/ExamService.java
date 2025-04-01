@@ -46,9 +46,9 @@ public class ExamService {
         if( optionalExamEntity.isPresent() ){
             // 3. Optional 객체에서 (영속된)엔티티 꺼내기
             ExamEntity entity = optionalExamEntity.get();
-            entity.setName( entity.getName() );
-            entity.setKor( entity.getKor());
-            entity.setEng( entity.getEng() );
+            entity.setName( examEntity.getName() );
+            entity.setKor( examEntity.getKor());
+            entity.setEng( examEntity.getEng() );
             return true;
         }
         return false;

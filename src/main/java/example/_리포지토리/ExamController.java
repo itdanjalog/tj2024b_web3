@@ -25,7 +25,7 @@ public class ExamController {
     // 3. U : 수정
     @PutMapping
     public boolean put( @RequestBody ExamEntity examEntity ){
-        boolean result = examService.put( examEntity );
+        boolean result = examService.put2( examEntity );
         return result;
     }
 
