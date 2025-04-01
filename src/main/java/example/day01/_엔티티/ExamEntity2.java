@@ -1,4 +1,4 @@
-package example._엔티티;
+package example.day01._엔티티;
 
 import jakarta.persistence.*;
 
