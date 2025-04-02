@@ -1,4 +1,4 @@
-package example._리포지토리;
+package example.day01._리포지토리;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
