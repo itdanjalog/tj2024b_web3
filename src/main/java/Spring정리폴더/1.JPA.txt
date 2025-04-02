@@ -153,6 +153,17 @@
         3. BaseTime 클래스를 상속받을 클래스 에서 '자식클래스명 extends BaseTime'
             예] BookEntity extends BaseTime
 
+[ JPA entity 와 DTO/VO 변환]
+일반적인 흐름도
+
+view        <---HTTP [ JS0N  <---변환----> DTO ]--->  Controller  <----- JPA[ DTO <--변환--> entity ]-----> Service --entity--> Repository --> DB
+1. react            @RequestBody                                                 doEntity()
+2. flutter          @ResponseBody                                                doDto()
+3. jsp
+4. 타임리프
+5. 머스테치
+
+
 
 
 
