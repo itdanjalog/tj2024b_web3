@@ -154,30 +154,23 @@
             예] BookEntity extends BaseTime
 
 [ JPA entity 와 DTO/VO 변환]
-일반적인 흐름도
+    일반적인 흐름도
 
-view        <---HTTP [ JS0N  <---변환----> DTO ]--->  Controller  <----- JPA[ DTO <--변환--> entity ]-----> Service --entity--> Repository --> DB
-1. react            @RequestBody                                                 doEntity()
-2. flutter          @ResponseBody                                                doDto()
-3. jsp
-4. 타임리프
-5. 머스테치
+    view        <---HTTP [ JS0N  <---변환----> DTO ]--->  Controller  <----- JPA[ DTO <--변환--> entity ]-----> Service --entity--> Repository --> DB
+    1. react            @RequestBody                                                 doEntity()
+    2. flutter          @ResponseBody                                                doDto()
+    3. jsp
+    4. 타임리프
+    5. 머스테치
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[ JPA 영속성:Persistence  ]
+    1. 정의 : 자바객체를 데이터베이스와 연관 지어 생명주기를 관리하며 동기화하는 기능
+    2. 영속성 컨텍스트 : 영속된 객체들을 관리하는 메모리 공간
+    3. 영속성 매니저 : 영속된 객체들을 저장/조회/수정/삭제 가능하다.
+        영속성 매니저 주요 메소드
+            .persist( 비영속객체  );        : 영속성 (연결)부여
+            .detach( 영속객체 );            : 영속성 (연결)해제
+            .remove( 영속객체 );            : 영속성 삭제
+            .merage( 준영속객체 );          : 영속성 ( 다시 연결)해제
 
 
