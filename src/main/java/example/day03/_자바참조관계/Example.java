@@ -1,5 +1,7 @@
 package example.day03._자바참조관계;
 
+import java.util.ArrayList;
+
 public class Example {
     public static void main(String[] args) {
 
@@ -51,12 +53,16 @@ public class Example {
         // [양방향] , 데이터베이스 미사용 , 자바 가능
         // 7. reply 객체에서 board객체 와 category객체 알수 있다? [O] ,
         // 7. category 객체에서 board객체 와 reply객체 알수 있다? [O] ,
+        category.setBoardList( new ArrayList<>() );
+            category.getBoardList().add( board ); // 양방향 대입 
+        board.setReplyList( new ArrayList<>() );
+            board.getReplyList().add( reply ); // 양방향 대입
         System.out.println( category.getBoardList().get(0).getReplyList().get(0) );
-
-
-
-
-
+        // * StackOverflowError 오류 발생 : ( JVM[Stack]의 메모리가 넘쳤다. )
+        // -> toString() 메소드 때문에 순환참조가 된다.
+        //  category(toString포함) <--------> boardList(String포함)
+        // 1. 해결방안 : toString() 사용하지 않기 , 또는 사용하되 양방향일경우 한쪽 방향에 대해서만 사용
+        // @Data @ToString @ToString.Exclude
 
     }
 }
