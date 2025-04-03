@@ -21,8 +21,6 @@ public class Category {
     // @OneToMany( mappedBy = "단방향의멤버변수명" ) // 양방향 참조테이블은 자바에서만 참조한다.
     @ToString.Exclude // 순환참조 방지
     @Builder.Default // 빌더패턴 사용시 초기값 대입
-    @OneToMany( mappedBy = "category" )
-    private List<Board> boardList
-            = new ArrayList<>();
-
+    @OneToMany( mappedBy = "category" , cascade = CascadeType.ALL , fetch = FetchType.LAZY) // 제약조건옵션 : 만약에 PK가 삭제되면 FK????
+    private List<Board> boardList = new ArrayList<>();
 }

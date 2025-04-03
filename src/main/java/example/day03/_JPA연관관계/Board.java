@@ -24,9 +24,8 @@ public class Board {
     // + 양방향
     @ToString.Exclude // 순환참조 방지
     @Builder.Default // 빌더패턴 사용시 초기값 대입
-    @OneToMany( mappedBy = "board" )
-    private List<Reply> replyList
-            = new ArrayList<>();
+    @OneToMany( mappedBy = "board"  , cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    private List<Reply> replyList = new ArrayList<>();
 }
 
 

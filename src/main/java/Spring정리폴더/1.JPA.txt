@@ -171,6 +171,48 @@
             .persist( 비영속객체  );        : 영속성 (연결)부여
             .detach( 영속객체 );            : 영속성 (연결)해제
             .remove( 영속객체 );            : 영속성 삭제
-            .merage( 준영속객체 );          : 영속성 ( 다시 연결)해제
+            .merge( 준영속객체 );          : 영속성 ( 다시 연결)해제
+
+[ JPA 단방향 양방향 ]
+    1. 정의 : 여러 엔티티들 간의 참조 관계
+    2. 단방향 : 한 엔티티가 다른 엔티티로만 참조
+    3. 양방향 : 서로가 서로 엔티티를 참조
+    4. 사용법
+        @ManyToOne : 1:M(일대다)관계를 매핑 할때 사용되는 어노테이션
+        @OneToMany( mappedBy = "참조할멤버변수명") : 1:M(일대다)관계에서 양방향 매핑 할때 사용되는 어노테이션
+    예]
+    public class 하위엔티티 {
+        @ManyToOne // fk필드 선언 방법
+        private 상위엔티티 참조변수명;
+    }
+    public class 상위엔티티 {
+        @OneToMany( mappedBy = "상위참조변수명" )
+        private List<하위엔티티> 참조변수명;
+    }
+
+
+    - 영속성 제약조건 옵션 ( 1.cascade 2.fetch )
+    [1] @OneToMany( cascade = CascadeType.XXX )
+        1. cascade = CascadeType.ALL    : 부모[PK] 가 삭제/수정/저장 되면 자식[FK]도 같이 삭제/수정/저장 , REMOVE/MERGE/PERSIST
+        2. cascade = CascadeType.REMOVE : 부모[PK] 가 삭제 되면 자식[FK]도 같이 삭제됨. REMOVE
+        3. cascade = CascadeType.MERGE  : 부모[PK] 가 수정 되면 자식[FK]도 같이 수정됨. MERGE
+        4. cascade = CascadeType.DETACH : 부모[PK] 가 영속성 해제하면 자식[FK]도 같이 해제됨. DETACH
+        5. cascade = CascadeType.PERSIST: 부모[PK] 가 저장 되면 자식[FK]도 같이 저장 됨. PERSIST
+        6. cascade = CascadeType.REFRESH: 부모[PK] 가 새로 불러올때 자식[FK] 같이 새로 불러온다. (새로고침)
+
+    [2] @OneToMany( fetch = FetchType.XXX ) , @ManyToOne( fetch = FetchType.XXX )
+        1. fetch = FetchType.EAGER  : 즉시 로딩(기본값) : 해당 엔티티를 조회( .findXX() ) 할때 참조되는 모든 객체를 즉시 불러온다.
+            특징 : 초기 로딩 느리다. 불필요한 엔티티가 모두 가져오기 때문에 (메모리)로드 기능 저하
+
+        2. fetch = FetchType.LAZY   : 지연 로딩 : 해당 엔티티를 조회( .findXX() ) 할때 참조되는 객체를 불러오지 않고 .getXXX() 등 참조할때 참조되는 객체를 불러온다.
+            특징 : 초기 로딩 빠르다. 메모리 사용량을 적절하게 사용하므로 성능 최적화
+
+
+
+
+
+
+
+
 
 
