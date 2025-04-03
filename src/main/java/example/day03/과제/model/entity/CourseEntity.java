@@ -31,6 +31,4 @@ public class CourseEntity extends BaseTime  {
                 .cname( this.cname )
                 .build();
     }
-
-
 }

@@ -26,5 +26,4 @@ public class StudentEntity extends BaseTime {
                 .sname( this.sname )
                 .build();
     }
-
 }
