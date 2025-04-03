@@ -2,16 +2,18 @@ package example.day03.과제.model.entity;
 
 import example.day03.과제.model.dto.CourseDto;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "day03course")
-@Data@Builder
+@Setter@Getter@ToString
+@NoArgsConstructor // 빈생생자
+@AllArgsConstructor // 전체매개변수생성자
+@Builder
 public class CourseEntity extends BaseTime  {
+
     @Id // pk
     @GeneratedValue( strategy = GenerationType.IDENTITY) // auto_increment
     private int cno; // 과정번호

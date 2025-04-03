@@ -14,8 +14,6 @@ public class CourseDto {
         return CourseEntity.builder()
                 .cno( this.cno )
                 .cname( this.cname )
-                // .studentEntityList() 생략가능 , @Builder.Default
                 .build();
     }
-
 }
