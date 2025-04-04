@@ -1,6 +1,7 @@
 package example.day03.과제.controller;
 
 import example.day03.과제.model.dto.CourseDto;
+import example.day03.과제.model.dto.StudentDto;
 import example.day03.과제.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,19 @@ public class TaskController {
     public List<CourseDto> findAll(){
         System.out.println("TaskController.findAll");
         return taskService.findAll();
+    }
+
+    // 3. 특정한 과정에 학생 등록
+    @PostMapping("/student")
+    // { "sname" : "유재석" , "cno" : 1 }
+    public boolean saveStudent( @RequestBody StudentDto studentDto ){
+        return taskService.saveStudent( studentDto );
+    }
+
+    // 4. 특정한 과정에 학생 전체 조회
+    @GetMapping("/student")
+    public List<StudentDto> findAllStudent( @RequestParam int cno ){
+        return taskService.findAllStudent( cno );
     }
 
 }

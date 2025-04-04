@@ -3,11 +3,13 @@ package example.day03.과제.model.entity;
 import example.day03.과제.model.dto.StudentDto;
 import jakarta.persistence.*;
 import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 @Entity@Table(name = "day03student")
-@Data@Builder
+@Setter@Getter@ToString
+@NoArgsConstructor // 빈생생자
+@AllArgsConstructor // 전체매개변수생성자
+@Builder
 public class StudentEntity extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

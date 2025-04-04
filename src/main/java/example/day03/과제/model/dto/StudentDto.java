@@ -9,6 +9,11 @@ public class StudentDto {
     private int sno;
     private String sname;
 
+    private String createAt;
+
+    // + 학생 등록시 특정한 과정의 pk번호
+    private int cno;
+
     // + toEntity
     public StudentEntity toEntity(){
         return StudentEntity.builder()
