@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/day04/todos") // 공통 URL prefix
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TodoController {
 
     private final TodoService todoService;
