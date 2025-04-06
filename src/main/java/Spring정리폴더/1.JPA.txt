@@ -242,3 +242,8 @@
             find() 실행 시에는 연관된 엔티티를 로드하지 않음.
             필요한 시점 (getXXX()) 에만 데이터를 가져옴.
             ✅ 장점: 메모리 사용량을 줄이고, 성능 최적화 가능.
+
+
+3. JPQL, QueryDSL, Native Query
+4. DTO 직접 매핑과 Projection
+8. 페이징과 정렬 (Pageable)
