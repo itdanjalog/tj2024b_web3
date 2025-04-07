@@ -2,11 +2,10 @@ package example.day04.service;
 
 import example.day04.model.dto.TodoDto;
 import example.day04.model.entity.TodoEntity;
-import example.day04.model.repository.TodoRepository;
+import example.day04.model.repository.TodoEntityRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class TodoService {
-    private final TodoRepository todoRepository;
+    private final TodoEntityRepository todoRepository;
     // 1. 등록
     public TodoDto todoSave( TodoDto todoDto ){
         // 1. dto 를 entity 변환하기
