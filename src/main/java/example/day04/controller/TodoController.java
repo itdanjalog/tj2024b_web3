@@ -15,7 +15,8 @@ public class TodoController {
     private final TodoService todoService;
 
     // 1. 등록
-    @PostMapping
+    @PostMapping // http://localhost:8080/day04/todos
+    // { "title" : "운동하기" , "content" : "매일10분달리기" , "done" : "false" }
     public TodoDto todoSave(@RequestBody TodoDto todoDto ){
         return todoService.todoSave( todoDto );
     }
