@@ -48,6 +48,16 @@ public class TodoController {
         return todoService.todoDelete( id );
     }
 
+    // 6. 전체조회( + 페이징처리 )
+    // http://localhost:8080/day04/todos/page?page=1&size=3
+    @GetMapping("/page")
+    public List<TodoDto> todoFindByPage(
+            // @RequestParam( defaultValue = "초기값") : 만약에 매개변수값이 존재하지 않으면 초기값 대입
+            @RequestParam( defaultValue = "1") int page , // page : 현재 조회할 페이지번호 , 초기값 = 1
+            @RequestParam( defaultValue = "3") int size ){ // size : 현재 조회할 페이지당 자료 개수 , 초기값 = 3
+        return todoService.todoFindByPage( page , size );
+    }
+
 } // class end
 
 

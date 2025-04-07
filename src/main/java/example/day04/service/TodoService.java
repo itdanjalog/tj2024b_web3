@@ -5,6 +5,9 @@ import example.day04.model.entity.TodoEntity;
 import example.day04.model.repository.TodoEntityRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -129,10 +132,42 @@ public class TodoService {
 //                })
 //                .orElse( false );
     }
+
+    // 6. 전체조회( + 페이징처리 )
+    public List<TodoDto> todoFindByPage( int page , int size ){
+        // 1. PageRequest 클래스 이용한 페이징처리 설정
+            // PageRequest.of( 조회할페이지번호 , 자료개수 , 정렬[선택]  )
+            // - 조회할페이지번호는 1페이지가 0 부터 시작
+            // - 페이지당 조회할 자료 개수
+            // - Sort.by : 정렬
+                // - Sort.by( Sort.Direction.ASC , "필드명" ) : 오름차순
+                // - Sort.by( Sort.Direction.DESC , "필드명" ) : 내림차순( 최신순 )
+        PageRequest pageRequest =  PageRequest.of( page-1 ,  size , Sort.by( Sort.Direction.DESC , "id" ) );
+        // [방법2]. 2. stream 이용한 조회 리스트를 dto로 변환한다.
+        return todoRepository.findAll( pageRequest ).stream()
+                .map( TodoEntity :: toDto )
+                .collect( Collectors.toList() );
+        /*
+        // [방법1]
+        // 2. pageRequest객체르 findXX 에 매개변수로 대입한다.  .findAll( 페이징객체 ); , 반환타입 : Page타입 = List타입 유사
+        Page< TodoEntity > todoEntityPage = todoRepository.findAll( pageRequest );
+        // 3. page타입의 entity 를 dto로 변환
+        List< TodoDto > todoDtoList = new ArrayList<>();
+        for( int index = 0 ; index < todoEntityPage.getContent().size() ; index++ ){
+            TodoDto todoDto = todoEntityPage.getContent().get( index ).toDto();
+            todoDtoList.add( todoDto );
+        }
+        return todoDtoList;
+        */
+    }
 } // class end
 
 
 
+//   System.out.println("todoEntityPage = " + todoEntityPage);
+//   System.out.println( todoEntityPage.getTotalElements() ); // .getTotalElements() : 전체 게시물수 반환 , 19
+//   System.out.println( todoEntityPage.getTotalPages() ); // .getTotalPages() : 전체 페이지수 반환 , 7
+//   System.out.println( todoEntityPage.getContent() ); // .getContent() : 조회된 자료의 Page타입 --> List 타입으로 변환
 
 
 
