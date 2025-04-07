@@ -42,7 +42,7 @@ public class TodoController {
     }
 
     // 5. 개별 삭제
-    // http://localhost:8080/day04/todos/view?id=1
+    // http://localhost:8080/day04/todos?id=1
     @DeleteMapping
     public boolean todoDelete( @RequestParam int id ){
         return todoService.todoDelete( id );
