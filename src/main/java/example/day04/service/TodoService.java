@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class TodoService {
-    private final TodoEntityRepository todoRepository;
+    private final TodoEntityRepository todoEntityRepository;
     // 1. 개별 등록
     public TodoDto todoSave( TodoDto todoDto ){
         // 1. dto 를 entity 변환하기
         TodoEntity todoEntity = todoDto.toEntity();
         // 2. entity를 save(영속화/db레코드 매칭/등록) 한다.
-        TodoEntity saveEntity = todoRepository.save( todoEntity );
+        TodoEntity saveEntity = todoEntityRepository.save( todoEntity );
         // 3. save 로 부터 반환된 엔티티(영속화)된 결과가 존재하면 
         if( saveEntity.getId() > 0 ){
             return saveEntity.toDto(); // entity를 dto로 변환하여 반환
@@ -41,7 +41,7 @@ public class TodoService {
 
         // [방법1]. 일반 반복문 ====================================================================== //
         // 1. 모든 entity 조회 , findAll()
-        List<TodoEntity> todoEntityList = todoRepository.findAll();
+        List<TodoEntity> todoEntityList = todoEntityRepository.findAll();
         // 2. 모든 entity 리스트 를 dto 리스트 변환하다.
         List<TodoDto> todoDtoList = new ArrayList<>(); // 2-1 : dto 리스트 생성한다.
         for( int index = 0 ; index < todoEntityList.size() ; index++ ){ // 2-2 : entity 리스트를 순회
@@ -52,7 +52,7 @@ public class TodoService {
         return todoDtoList;
 
         // [방법2]. stream ====================================================================== //
-        // return todoRepository.findAll().stream().map( TodoEntity::toDto ).collect( Collectors.toList() );
+        // return todoEntityRepository.findAll().stream().map( TodoEntity::toDto ).collect( Collectors.toList() );
 
     } // f end
 
@@ -62,7 +62,7 @@ public class TodoService {
         // 1. pk( 식별번호 ) 이용한 entity 조회하기, .findById()
         // Optional 클래스 : null 제어하는 메소드들을 제공하는 클래스
         Optional< TodoEntity > optional
-                = todoRepository.findById( id );
+                = todoEntityRepository.findById( id );
          // 2. 조회한 결과가 존재하면 , .isPresent()
         if( optional.isPresent() ){
             // 3. Optional 에서 entity 꺼내기
@@ -74,7 +74,7 @@ public class TodoService {
         }
         return null;
         // [방법2] stream ==========================================//
-        // return todoRepository.findById( id ).map( TodoEntity::toDto ).orElse( null );
+        // return todoEntityRepository.findById( id ).map( TodoEntity::toDto ).orElse( null );
 
         // .map( TodoEntity::toDto ) : Optional 의 데이터가 null 이 아니면 map 실행하여 dto 변환후 반환
         // .orElse( null ) : Optional 의 데이터가 null 이면 null 반환
@@ -86,7 +86,7 @@ public class TodoService {
         // [방법1] 일반적인 =========================================//
         // 1. 수정할 id 로 엔티티를 조회한다.
         Optional< TodoEntity > optional
-                = todoRepository.findById( todoDto.getId()  );
+                = todoEntityRepository.findById( todoDto.getId()  );
         // 2. 존재하면 수정 하고 존재하지 않으면 null 반환 , .isPresent()
         if( optional.isPresent() ){
             // 3. 엔티티 꺼내기
@@ -99,7 +99,7 @@ public class TodoService {
         }
         return null;
         // [방법2] stream ==========================================//
-//        return todoRepository.findById( todoDto.getId() )
+//        return todoEntityRepository.findById( todoDto.getId() )
 //                // findById 결과의 optional 데이터가 존재하면
 //                .map(  (entity) -> { // 람다식 함수.  ()->{}
 //                            entity.setTitle( todoDto.getTitle() );
@@ -116,18 +116,18 @@ public class TodoService {
         // [방법1] 일반적인 =========================================//
         // 1. id를 이용하여 엔티티 (존재여부) 조회 하기
             // findById 반환타입:Optional vs existsById : boolean
-        boolean result = todoRepository.existsById( id );
+        boolean result = todoEntityRepository.existsById( id );
         // 2. 만약에 존재 하면
         if( result == true ){
             // 3. 영속성 제거  , deleteById( pk번호 );
-            todoRepository.deleteById( id );
+            todoEntityRepository.deleteById( id );
             return true; // 삭제 성공
         }
         return false; // 존재하지 않으면 삭제 취소
         // [방법2] stream ==========================================//
-//        return todoRepository.findById( id )
+//        return todoEntityRepository.findById( id )
 //                .map( (entity) -> {
-//                    todoRepository.deleteById(id);
+//                    todoEntityRepository.deleteById(id);
 //                    return true;
 //                })
 //                .orElse( false );
@@ -144,13 +144,13 @@ public class TodoService {
                 // - Sort.by( Sort.Direction.DESC , "필드명" ) : 내림차순( 최신순 )
         PageRequest pageRequest =  PageRequest.of( page-1 ,  size , Sort.by( Sort.Direction.DESC , "id" ) );
         // [방법2]. 2. stream 이용한 조회 리스트를 dto로 변환한다.
-        return todoRepository.findAll( pageRequest ).stream()
+        return todoEntityRepository.findAll( pageRequest ).stream()
                 .map( TodoEntity :: toDto )
                 .collect( Collectors.toList() );
         /*
         // [방법1]
         // 2. pageRequest객체르 findXX 에 매개변수로 대입한다.  .findAll( 페이징객체 ); , 반환타입 : Page타입 = List타입 유사
-        Page< TodoEntity > todoEntityPage = todoRepository.findAll( pageRequest );
+        Page< TodoEntity > todoEntityPage = todoEntityRepository.findAll( pageRequest );
         // 3. page타입의 entity 를 dto로 변환
         List< TodoDto > todoDtoList = new ArrayList<>();
         for( int index = 0 ; index < todoEntityPage.getContent().size() ; index++ ){
