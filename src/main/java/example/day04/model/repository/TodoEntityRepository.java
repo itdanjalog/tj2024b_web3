@@ -36,7 +36,7 @@ public interface TodoEntityRepository extends JpaRepository<TodoEntity , Integer
         // List<TodoEntity> : 조회 결과를 List 타입
         // findByTitleNative : 규칙이 없으므로 아무거나
         // ( String title ) : 조회 조건으로 SQL문법의 매개변수
-    @Query( value = "select * from todo where title like %:title% ",nativeQuery = true )
+    @Query( value = "select * from todo where title like %:keyword% ",nativeQuery = true )
     List<TodoEntity> findByTitleNativeSearch( String keyword );
 }
 
