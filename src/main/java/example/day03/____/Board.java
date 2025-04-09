@@ -1,4 +1,4 @@
-package example.day03._자바참조관계;
+package example.day03.____;
 
 import lombok.Builder;
 import lombok.Data;

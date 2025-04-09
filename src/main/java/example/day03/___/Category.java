@@ -1,4 +1,4 @@
-package example.day03._JPA연관관계;
+package example.day03.___;
 
 import jakarta.persistence.*;
 import lombok.Builder;
