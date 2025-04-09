@@ -41,3 +41,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+springBoot {
+    mainClass = 'com.example.day04.AppStart' // ← 본인이 실행할 main() 클래스 경로로 수정
+}
