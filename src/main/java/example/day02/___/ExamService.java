@@ -1,4 +1,4 @@
-package example.day02._영속성;
+package example.day02.___;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
