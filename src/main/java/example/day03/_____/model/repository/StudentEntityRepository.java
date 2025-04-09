@@ -1,6 +1,6 @@
-package example.day03.과제.model.repository;
+package example.day03._____.model.repository;
 
-import example.day03.과제.model.entity.StudentEntity;
+import example.day03._____.model.entity.StudentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

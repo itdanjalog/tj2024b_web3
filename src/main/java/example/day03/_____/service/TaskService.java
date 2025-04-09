@@ -1,18 +1,14 @@
-package example.day03.과제.service;
+package example.day03._____.service;
 
-import example.day03.과제.model.dto.CourseDto;
-import example.day03.과제.model.dto.StudentDto;
-import example.day03.과제.model.entity.CourseEntity;
-import example.day03.과제.model.entity.StudentEntity;
-import example.day03.과제.model.repository.CourseEntityRepository;
-import example.day03.과제.model.repository.StudentEntityRepository;
+import example.day03._____.model.dto.CourseDto;
+import example.day03._____.model.dto.StudentDto;
+import example.day03._____.model.entity.CourseEntity;
+import example.day03._____.model.entity.StudentEntity;
+import example.day03._____.model.repository.CourseEntityRepository;
+import example.day03._____.model.repository.StudentEntityRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;

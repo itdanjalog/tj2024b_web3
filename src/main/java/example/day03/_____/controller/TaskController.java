@@ -1,8 +1,8 @@
-package example.day03.과제.controller;
+package example.day03._____.controller;
 
-import example.day03.과제.model.dto.CourseDto;
-import example.day03.과제.model.dto.StudentDto;
-import example.day03.과제.service.TaskService;
+import example.day03._____.model.dto.CourseDto;
+import example.day03._____.model.dto.StudentDto;
+import example.day03._____.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

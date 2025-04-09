@@ -1,6 +1,6 @@
-package example.day03.과제.model.dto;
+package example.day03._____.model.dto;
 
-import example.day03.과제.model.entity.StudentEntity;
+import example.day03._____.model.entity.StudentEntity;
 import lombok.Builder;
 import lombok.Data;
 
