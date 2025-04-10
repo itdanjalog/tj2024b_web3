@@ -30,7 +30,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     // 3. mysql JDBC
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    // runtimeOnly 'com.mysql:mysql-connector-j'
+    // 3. 인메모리를 사용하는 H2( 휘발성 DB 이므로 서버가 재실행되면 초기화된다. / 개발·배포테스트 단계 주로 사용. )
+    runtimeOnly 'com.h2database:h2'
     // 4. JPA*
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
