@@ -10,6 +10,7 @@ import web.service.MemberService;
 @RestController // Spring MVC2 controller
 @RequestMapping( "/member")  // 공통 url 정의
 @RequiredArgsConstructor // final(수정불가) 필드의 생성자 자동 생성
+@CrossOrigin("*")
 // -> 관례적으로 클래스 내부에서 사용하는 모든 필드들을 수정불가능 상태로 사용한다.
 public class MemberController {
     // -> 관례적으로 다른곳에 해당하는 필드를 수정못하도록 final 사용한다.(안정성 보장)
@@ -21,8 +22,6 @@ public class MemberController {
     public boolean signUp( @RequestBody MemberDto memberDto ){
         return memberService.signUp( memberDto );
     }
-
-
 } // class end
 
 
