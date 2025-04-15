@@ -8,4 +8,7 @@ import web.model.entity.MemberEntity;
 public interface MemberEntityRepository
     extends JpaRepository<MemberEntity,Integer> {
     // 상속 하므로써 JPA 기본적인 CRUD 제공
+
+    MemberEntity findByMemail(String memail);
+
 }
