@@ -35,6 +35,13 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     // 4. JPA*
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // 5. 비크립트 알고리즘 라이브러리
+    implementation 'org.springframework.security:spring-security-crypto:6.4.4'
+    // 6. jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
 }
 
 tasks.named('test') {
