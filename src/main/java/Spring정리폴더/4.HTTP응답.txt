@@ -1,0 +1,37 @@
+[ http ]
+🔹 자주 사용하는 응답코드
+코드	                의미	        설명
+200 OK	            요청 성공	일반적인 성공 응답
+201 Created	        리소스 생성 성공	POST 요청 후 새 리소스 생성됨
+204 No Content	    응답 본문 없음	성공했지만 반환할 데이터 없음 (ex. 삭제 성공)
+400 Bad Request	    잘못된 요청	파라미터 누락, 유효성 검사 실패 등
+401 Unauthorized	인증 필요	토큰 없음/유효하지 않음
+403 Forbidden	    접근 금지	권한 없음
+404 Not Found	    리소스 없음	잘못된 URL 등
+409 Conflict	    충돌	중복된 데이터 등
+500 Internal        Server Error	서버 오류	예외 발생 등 서버 문제
+
+
+✅ ResponseEntity란?
+🔸 정의
+ResponseEntity<T>는 Spring에서 HTTP 응답 전체(상태 코드, 헤더, 바디)를 제어할 수 있게 해주는 클래스야.
+컨트롤러 메서드에서 클라이언트에게 더 많은 정보를 전달하고 싶을 때 유용하지.
+
+✅ 200 OK – 요청 성공
+return ResponseEntity.status(200).body(data); // 200 OK + 데이터
+✅ 201 Created – 리소스 생성
+return ResponseEntity.status(201).body(data); // 201 Created + 바디만
+✅ 204 No Content – 성공, 반환 없음
+return ResponseEntity.status(204).build(); // 204 No Content
+✅ 4. 400 Bad Request – 클라이언트 요청 오류
+return ResponseEntity.status(400).body("이메일 또는 비밀번호가 없습니다."); // 400 Bad Request
+✅ 5. 401 Unauthorized – 인증 필요 / 토큰 없음
+return ResponseEntity.status(401).body("로그인이 필요합니다."); // 401 Unauthorized
+✅ 6. 403 Forbidden – 권한 없음
+return ResponseEntity.status(403).body("접근 권한이 없습니다."); // 403 Forbidden
+✅ 7. 404 Not Found – 리소스 없음
+return ResponseEntity.status(404).body("책을 찾을 수 없습니다."); // 404 Not Found
+✅ 8. 409 Conflict – 충돌 (중복 등)
+return ResponseEntity.status(409).body("이미 사용 중인 이메일입니다."); // 409 Conflict
+✅ 9. 500 Internal Server Error – 서버 내부 오류
+return ResponseEntity.status(500).body("서버 오류 발생: " + e.getMessage()); // 500 Internal Server Error

@@ -1,10 +1,13 @@
 package web.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component // Spring 컨테이너에 빈 등록
 public class JwtUtil {
@@ -17,9 +20,12 @@ public class JwtUtil {
         // Keys.secretKeyFor( SignatureAlgorithm.알고리즘명 );
     private Key secretKey = Keys.secretKeyFor( SignatureAlgorithm.HS256 );
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     // [1] JWT 토큰 발급 , 사용자의 이메일을 받아서 토큰 만들기
     public String createToken( String memail ){
-        return Jwts.builder()
+        String token =  Jwts.builder()
                 // 토큰에 넣을 내용물 , 로그인 성공한 회원의 이메일을 넣는다.
                 .setSubject( memail )
                 // 토큰이 발급된 날짜 , new Date() : 자바에서 제공하는 현재날짜 클래스
@@ -31,6 +37,14 @@ public class JwtUtil {
                 .signWith( secretKey )
                 // 위 정보로 JWT 토큰 생성하고 반환한다.
                 .compact();
+
+        // Redis에 저장 (기존 토큰 덮어쓰기)
+        redisTemplate.opsForValue().set("JWT:" + memail, token, 1, TimeUnit.DAYS);
+        // "JWT:" + memail: 키. 이메일을 이용해 JWT 토큰을 저장하는 형태로, 이메일별로 JWT를 구분해서 저장한다.
+        //token: 저장할 JWT 토큰.
+        //1: 만료 시간 (이 경우 1일).
+        //TimeUnit.DAYS: 만료 시간의 단위 (여기선 일 단위로 설정).
+        return token;
     } // f end
 
     // [2] JWT 토큰 검증
@@ -42,8 +56,19 @@ public class JwtUtil {
                     .parseClaimsJws( token ) // 4. 검증에 사용할 토큰 지정
                     .getBody(); // 5. 검증된 (claims) 객체 생성후 반환
             // claims 안에는 다양한 토큰 정보 들어있다.
+
+
+            String memail = claims.getSubject();
+            String redisToken = redisTemplate.opsForValue().get("JWT:" + memail);
+            System.out.println(  redisTemplate.keys("*") );
+
+            if (token.equals(redisToken)) {
+                return memail;
+            } else {
+                System.out.println(" >> JWT 불일치 또는 중복 로그인 감지");
+            }
             System.out.println( claims.getSubject() ); // 토큰에 저장된 (로그인된)회원이메일
-            return claims.getSubject();
+
         }catch ( ExpiredJwtException e){
             // 토큰이 만료 되었을때 예외 클래스
             System.out.println(" >> JWT 토큰 기한 만료 : " + e );
@@ -52,6 +77,10 @@ public class JwtUtil {
             System.out.println(" >> JWT 예외 : " + e );
         }
         return null;// 유효하지 않은 토큰 또는 오류 발생시 null 반환
+    }
+
+    public void deleteToken(String memail) {
+        redisTemplate.delete("JWT:" + memail);
     }
 
 } // class end

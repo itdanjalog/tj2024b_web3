@@ -1,0 +1,26 @@
+[ Redis ]
+
+**Redis (REmote DIctionary Server)**는 오픈 소스 인메모리 데이터 저장소입니다.
+데이터를 **RAM(메모리)**에 저장해서 매우 빠른 속도로 읽고 쓸 수 있는 것이 특징입니다.
+다양한 데이터 구조를 지원합니다: String, List, Set, Hash, Sorted Set, Bitmap, HyperLogLog, Stream, Geo.
+
+Redis는 속도와 실시간성이 중요한 기능에 특화.
+예: 로그인 토큰 저장, 인기글 랭킹, 실시간 알림, 세션 처리, 캐시 등
+
+둘을 같이 사용하는 경우가 많습니다.
+MySQL에 저장된 데이터를 Redis에 캐시하여 속도 향상
+JWT RefreshToken을 Redis에 저장, MySQL에는 유저 정보 저장
+
+
+항목	            Redis	                                MySQL
+저장방식	        메모리(In-Memory) 기반	                디스크 기반(Disk-based)
+속도	            매우 빠름 (마이크로초 단위)	                느림 (밀리초 단위)
+데이터구조	    다양한 구조 지원 (List, Set, Hash 등)	    테이블 기반 관계형 구조
+지속성	        선택적 (AOF, RDB, 또는 휘발성)	            기본적으로 지속성 보장
+주 용도	        캐싱, 세션, 랭킹, 실시간 처리 등	        영속성 있는 데이터 저장, 복잡한 쿼리
+트랜잭션         지원	제한적 지원 (멀티, exec 등)	        ACID 완전 지원
+스키마	        없음 (NoSQL)	                            있음 (스키마 기반)
+확장성	        수평 확장 용이 (클러스터링)	                수직 확장 중심 (읽기 복제 가능)
+복잡한 쿼리       불가능 / 제한적	                        SQL 쿼리로 다양한 조인, 조건 가능
+백업 / 복구	    AOF, RDB 방식	                        dump 파일, binary log 등
+

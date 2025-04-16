@@ -2,6 +2,8 @@ package web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.model.dto.MemberDto;
 import web.model.entity.MemberEntity;
@@ -19,13 +21,23 @@ public class MemberController {
 
     // [1] 회원가입 // { "memail" : "qwe@naver.com" , "mpwd" : "qwe" , "mname" : "유재석" }
     @PostMapping("/signup") // http://localhost:8080/member/signup
-    public boolean signUp( @RequestBody MemberDto memberDto ){
-        return memberService.signUp( memberDto );
+    public ResponseEntity<Boolean> signUp(@RequestBody MemberDto memberDto ){
+        boolean result = memberService.signUp(memberDto);
+        if (result) {
+            return ResponseEntity.status(201).body( true ); // 201 + 바디만
+        } else {
+            return ResponseEntity.status(400).body(false); // 400 Bad Request
+        }
     }
     // [2] 로그인 // { "memail" : "qwe@naver.com" , "mpwd" : "qwe" }
     @PostMapping("/login") // http://localhost:8080/member/login
-    public String login( @RequestBody MemberDto memberDto ){
-        return memberService.login( memberDto );
+    public ResponseEntity<String>  login( @RequestBody MemberDto memberDto ){
+        String token = memberService.login(memberDto);
+        if (token != null) {
+            return ResponseEntity.status(200).body(token); // 200 OK
+        } else {
+            return ResponseEntity.status(401).body("로그인 실패"); // 401 Unauthorized
+        }
     }
     // [3] 로그인된 회원 검증 / 내정보 조회
     // @RequestHeader : HTTP 헤더 정보를 매핑 하는 어노테이션 , JWT 정보는 HTTP 헤더 에 담을 수 있다.
@@ -35,15 +47,28 @@ public class MemberController {
     // @PathVariable : HTTP 헤더의 경로 값 매핑 하는 어노테이션
     @GetMapping("/info") // http://localhost:8080/member/info
     // headers : { 'Authorization' : 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2VAbmF2ZXIuY29tIiwiaWF0IjoxNzQ0NzcxNTM0LCJleHAiOjE3NDQ4NTc5MzR9.g8sM_lX31AgbILTQMJXGEzX5K2F6Z6ak-mBweZmpM-I'}
-    public MemberDto info( @RequestHeader("Authorization") String token ){ System.out.println( token );
-        return memberService.info( token );
+    public ResponseEntity<MemberDto> info( @RequestHeader("Authorization") String token ){ System.out.println( token );
+        MemberDto member = memberService.info(token);
+        if (member != null) {
+            return ResponseEntity.status(200).body(member); // 200 OK
+        } else {
+            return ResponseEntity.status(401).build(); // 401 Unauthorized
+        }
     }
+
+
+    // [4] 로그아웃
+    @GetMapping("/logout")
+    public  ResponseEntity<Void>  logout(@RequestParam String memail) {
+        memberService.logout(memail);
+        return ResponseEntity.status(204).build(); // 204
+    }
+
+    @GetMapping("/recent-login-count")
+    public ResponseEntity<Integer> getRecentLoginCount() {
+        int count = memberService.getRecentLoginCount();
+        return ResponseEntity.status(200).body(count);
+    }
+
+
 } // class end
-
-
-
-
-
-
-
-

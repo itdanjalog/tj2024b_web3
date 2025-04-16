@@ -2,16 +2,17 @@ package web.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 import web.model.dto.MemberDto;
 import web.model.entity.MemberEntity;
 import web.model.repository.MemberEntityRepository;
 import web.util.JwtUtil;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service // Spring MVC2 service
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class MemberService {
 
     // * JWT 객체 주입
     private final JwtUtil jwtUtil;
+    private final StringRedisTemplate redisTemplate;
 
     // [2] 로그인 , 로그인 성공시 token 실패시 null
     public String login( MemberDto memberDto ){
@@ -56,6 +58,11 @@ public class MemberService {
         String token
             = jwtUtil.createToken( memberEntity.getMemail() );
         System.out.println( ">>발급된 token : " + token );
+
+        // Redis에 저장, 1시간 동안 유지
+        redisTemplate.opsForValue()
+                .set("RECENT_LOGIN:" + memberDto.getMemail(), "true", 1, TimeUnit.HOURS);
+
         return token;
     }
 
@@ -74,6 +81,17 @@ public class MemberService {
         return memberEntity.toDto();
     }
 
+
+    // [4] 로그아웃 처리
+    public void logout(String memail) {
+        jwtUtil.deleteToken(memail);
+    }
+
+    // 최근 로그인한 회원 수 조회
+    public int getRecentLoginCount() {
+        Set<String> keys = redisTemplate.keys("RECENT_LOGIN:*");
+        return keys != null ? keys.size() : 0;
+    }
 
 }
 
