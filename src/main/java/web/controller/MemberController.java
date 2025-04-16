@@ -18,12 +18,12 @@ public class MemberController {
     private final MemberService memberService;
 
     // [1] 회원가입 // { "memail" : "qwe@naver.com" , "mpwd" : "qwe" , "mname" : "유재석" }
-    @PostMapping("/signup")
+    @PostMapping("/signup") // http://localhost:8080/member/signup
     public boolean signUp( @RequestBody MemberDto memberDto ){
         return memberService.signUp( memberDto );
     }
-    // [2] 로그인
-    @PostMapping("/login")
+    // [2] 로그인 // { "memail" : "qwe@naver.com" , "mpwd" : "qwe" }
+    @PostMapping("/login") // http://localhost:8080/member/login
     public String login( @RequestBody MemberDto memberDto ){
         return memberService.login( memberDto );
     }
