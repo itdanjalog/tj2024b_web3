@@ -27,7 +27,17 @@ public class MemberController {
     public String login( @RequestBody MemberDto memberDto ){
         return memberService.login( memberDto );
     }
-
+    // [3] 로그인된 회원 검증 / 내정보 조회
+    // @RequestHeader : HTTP 헤더 정보를 매핑 하는 어노테이션 , JWT 정보는 HTTP 헤더 에 담을 수 있다.
+    // Authorization : 인증 속성 , { Authorization : token값 }
+    // @RequestParam : HTTP 헤더의 경로 쿼리스트링 매핑 하는 어노테이션
+    // @RequestBody : HTTP 본문의 객체를 매핑 하는 어노테이션
+    // @PathVariable : HTTP 헤더의 경로 값 매핑 하는 어노테이션
+    @GetMapping("/info") // http://localhost:8080/member/info
+    // headers : { 'Authorization' : 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2VAbmF2ZXIuY29tIiwiaWF0IjoxNzQ0NzcxNTM0LCJleHAiOjE3NDQ4NTc5MzR9.g8sM_lX31AgbILTQMJXGEzX5K2F6Z6ak-mBweZmpM-I'}
+    public MemberDto info( @RequestHeader("Authorization") String token ){ System.out.println( token );
+        return memberService.info( token );
+    }
 
 
 } // class end

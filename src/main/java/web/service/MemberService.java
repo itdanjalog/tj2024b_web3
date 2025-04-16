@@ -4,8 +4,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import web.model.dto.MemberDto;
 import web.model.entity.MemberEntity;
 import web.model.repository.MemberEntityRepository;
@@ -50,16 +52,33 @@ public class MemberService {
                 = passwordEncoder.matches( memberDto.getMpwd() , memberEntity.getMpwd() );
         // 4. 비밀번호 검증 실패이면
         if( inMath == false ) return null; // 로그인 실패
-        // 5. 비밀번호 검증 성공이면 Token 발급
+        // 5. 비밀번호 검증 성공이면 Token 발급 vs 세션 부여/발급
         String token
             = jwtUtil.createToken( memberEntity.getMemail() );
         System.out.println( ">>발급된 token : " + token );
         return token;
+    }
 
+    // [3] 전달받은 token 으로 token 검증하여 유효한 token 은 회원정보(dto) 반환 유효하지 않은 token null 반환
+    public MemberDto info(  String token ){
+        // 1. 전달받은 token 으로 검증하기. vs 세션 호출/검증
+        String memail = jwtUtil.validateToken( token );
+        // 2. 검증이 실패이면 '비로그인중' 이거나 유효기간 만료 , 실패
+        if( memail == null ) return null;
+        // 3. 검증이 성공이면 토큰에 저장된 이메일을 가지고 엔티티 조회
+        MemberEntity memberEntity
+                = memberEntityRepository.findByMemail( memail );
+        // 4. 조회된 엔티티가 없으면 실패
+        if( memberEntity == null ) return null;
+        // 5. 조회 성공시 조회된 엔티티를 dto로 변환하여 반환한다.
+        return memberEntity.toDto();
     }
 
 
 }
+
+
+
 
 
 
