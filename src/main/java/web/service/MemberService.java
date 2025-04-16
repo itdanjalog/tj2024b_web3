@@ -63,7 +63,7 @@ public class MemberService {
     public MemberDto info(  String token ){
         // 1. 전달받은 token 으로 검증하기. vs 세션 호출/검증
         String memail = jwtUtil.validateToken( token );
-        // 2. 검증이 실패이면 '비로그인중' 이거나 유효기간 만료 , 실패
+        // 2. 검증이 실패이면 유효기간 만료 , 실패
         if( memail == null ) return null;
         // 3. 검증이 성공이면 토큰에 저장된 이메일을 가지고 엔티티 조회
         MemberEntity memberEntity

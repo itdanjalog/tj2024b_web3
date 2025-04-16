@@ -38,8 +38,6 @@ public class MemberController {
     public MemberDto info( @RequestHeader("Authorization") String token ){ System.out.println( token );
         return memberService.info( token );
     }
-
-
 } // class end
 
 
