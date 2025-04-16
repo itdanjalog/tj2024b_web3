@@ -32,4 +32,29 @@ public class MemberService {
         if( saveEntity.getMno() >= 1 ){ return true;}
         return false;
     }
+
+    // [2] 로그인
+    public String login( MemberDto memberDto ){
+        // 1. 이메일(아이디)를 DB에서 조회하여 엔티티 찾기
+        MemberEntity memberEntity
+                = memberEntityRepository.findByMemail( memberDto.getMemail() );
+        // 2. 조회된 엔티티가 없으면
+        if( memberEntity == null ){return null;} // 로그인 실패
+        // 3. 조회된 엔티티의 비밀번호 검증.  .matches( 입력받은패스워드 , 암호화된패스워드 )
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();// Bcrypt 객체 생성
+        boolean inMath
+                = passwordEncoder.matches( memberDto.getMpwd() , memberEntity.getMpwd() );
+        // 4. 비밀번호 검증 실패이면
+        if( inMath == false ) return null; // 로그인 실패
+        // 5. 비밀번호 검증 성공이면 ,
+
+    }
+
+
 }
+
+
+
+
+
+

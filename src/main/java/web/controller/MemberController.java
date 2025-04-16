@@ -22,6 +22,14 @@ public class MemberController {
     public boolean signUp( @RequestBody MemberDto memberDto ){
         return memberService.signUp( memberDto );
     }
+    // [2] 로그인
+    @PostMapping("/login")
+    public String login( @RequestBody MemberDto memberDto ){
+        return memberService.login( memberDto );
+    }
+
+
+
 } // class end
 
 
