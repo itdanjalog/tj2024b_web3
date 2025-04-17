@@ -38,6 +38,13 @@ public class MemberController {
     public MemberDto info( @RequestHeader("Authorization") String token ){ System.out.println( token );
         return memberService.info( token );
     }
+
+    // [4] 로그아웃
+    @GetMapping("/logout")
+    public void logout( @RequestParam String memail ){
+        memberService.logout( memail );
+    }
+
 } // class end
 
 

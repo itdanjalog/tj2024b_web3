@@ -74,7 +74,10 @@ public class MemberService {
         return memberEntity.toDto();
     }
 
-
+    // [4] 로그아웃
+    public void logout( String memail ){
+        jwtUtil.deleteToken( memail );
+    }
 }
 
 
