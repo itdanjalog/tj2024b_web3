@@ -1,0 +1,47 @@
+[ Redis ]
+    1. 정의 : 인메모리 데이터 저장소
+        -> PC본체( CPU[연산처리] , RAM[휘발성메모리] , ROM/SSD/HDD[비휘발성메모리] )
+        RAM[휘발성메모리/주기억장치] : 실행중 상태에서만 메모리 저장          , 바둑게임 실행 , RAM
+        ROM/SSD/HDD[비휘발성메모리/보조기억장치] : 비실행중 상태에서 메모리 저장, 바둑게임 설치 , C:
+        -> 보조기억장치 보다 주기억장치가 빠르다.
+
+    2. 목적 : 관계형데이터베이스(MYSQL)가 보조기억장치 이므로 빠른 메모리 를 사용할때 주기억장치가 필요할때 사용.
+        -> 관계형데이터베이스(MYSQL) : SQL(질의어)
+        -> 비정형데이터베이스(몽고DB/Redis) : noSQL( 객체 형식 - set/get )
+
+    3. 구조 : key-value [ map비슷 , json비슷 ]
+
+    4. 차이점 : Redis vs RDB
+        - Redis : 휘발성메모리, 빠르다. , 종료시 초기화/영속화 , 단순 연결구조          , 단순 명령(NOSQL)
+        - RDB : 비휘발성메모리 , 느리다. , 종료시 유지        , 복잡한 연결구조(JDBC)  , 복잡 명령(SQL)
+        - 활용처 :
+            영구저장 데이터(RDB) : 회원정보 , 게시물정보
+            실시간 데이터(REDIS) : 캐싱, 로그인상태정보(세션/토큰) , 랭킹/순위 , 채팅 , 알림 , 위치기반(좌표) 등등
+
+    5. 캐싱 : Select 할떄마다 데이터베이스의 접근/요청하면 빅데이터(100만개의레코드이상) 과부하/성능 저하
+        -> DB에서 한번 조회한 결과를 redis 저장(캐싱)하여 다음 조회할때 DB를 조회하지 않고 redis 조회하면 된다. 성능 향상
+
+    6. 설치 : 리눅스(운영체제) 기반의 mysql보다 심플한 프로토콜 사용하므로 가볍다.
+        1. 윈도우 : https://github.com/microsoftarchive/redis/releases    [ 강의 날짜 기준 : 3.0.504 ]
+        2. 해당 버전 클릭 : Redis-x64-3.0.504.zip, 5.6 MB,  Jul 1, 2016
+        3. 압축풀기 -> 압축 푼 폴더내 -> 'redis-server.exe' 실행
+
+    7. Spring Data Redis
+        1. https://start.spring.io/
+        2. 그레이들에 외부 redis 와 연동할 라이브러리 설치
+            implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        3. application.properties 파일 에서 ip와 port 기본 연동 설정
+            spring.redis.host=localhost
+            spring.redis.port=6379
+
+
+
+
+
+
+
+
+
+
+
+
