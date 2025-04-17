@@ -46,6 +46,14 @@ public class MemberController {
         memberService.logout( token );
     }
 
+    // [5] 실시간 최근 24시간내 로그인 한 접속자 수
+    @GetMapping("/login/count")
+    public int loginCount(){
+        return memberService.loginCount();
+    }
+
+
+
 } // class end
 
 
