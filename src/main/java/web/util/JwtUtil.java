@@ -1,10 +1,13 @@
 package web.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component // Spring 컨테이너에 빈 등록
 public class JwtUtil {
@@ -17,9 +20,13 @@ public class JwtUtil {
         // Keys.secretKeyFor( SignatureAlgorithm.알고리즘명 );
     private Key secretKey = Keys.secretKeyFor( SignatureAlgorithm.HS256 );
 
+    @Autowired // 빈 주입
+    private StringRedisTemplate stringRedisTemplate; // Redis 를 조작하기 위한 객체
+
     // [1] JWT 토큰 발급 , 사용자의 이메일을 받아서 토큰 만들기
     public String createToken( String memail ){
-        return Jwts.builder()
+        //return Jwts.builder()
+        String token = Jwts.builder() // +해당 반환된 토큰을 변수에 저장
                 // 토큰에 넣을 내용물 , 로그인 성공한 회원의 이메일을 넣는다.
                 .setSubject( memail )
                 // 토큰이 발급된 날짜 , new Date() : 자바에서 제공하는 현재날짜 클래스
@@ -31,6 +38,15 @@ public class JwtUtil {
                 .signWith( secretKey )
                 // 위 정보로 JWT 토큰 생성하고 반환한다.
                 .compact();
+        // + 중복 로그인 방지 하고자 웹서버 가 아닌 Redis 에 토큰 정보 저장 ( 분산 처리 , MSA구축 , AI 속도 등등  )
+            // (1) Redis에 토큰 저장하기.  .opsForValue().set(key , value ); , .opsForValue().set( 계정식별정보 , 토큰 );
+            stringRedisTemplate.opsForValue().set("JWT:"+memail , token , 24 , TimeUnit.HOURS ); // 토큰 유지시간 과 일치
+            // (2) 현재 Redis에 저장된 key 들을 확인 , .keys("*") : 현재 redis의 저장된 모든 key 반환
+            System.out.println( stringRedisTemplate.keys("*") );
+            // (3) 현재 Reids에 저장된 특정한 key의 값 확인 .opsForValue().get( key );
+            System.out.println( stringRedisTemplate.opsForValue().get("JWT:"+memail) );
+        return token;
+
     } // f end
 
     // [2] JWT 토큰 검증

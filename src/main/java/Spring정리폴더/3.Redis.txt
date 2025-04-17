@@ -34,14 +34,15 @@
             spring.redis.host=localhost
             spring.redis.port=6379
 
-
-
-
-
-
-
-
-
-
-
+    8. 주 사용법
+        1. 레디스템플릿 객체를 생성한다.
+            @Autowired // 빈 주입
+            private StringRedisTemplate stringRedisTemplate;
+        2. 레디스에 데이터 저장하는 방법
+            stringRedisTemplate.opsForXXX().set
+            1. stringRedisTemplate.opsForValue( ).set( key , value );
+            -> TTL : Time To Live : 해당하는 데이터가 언제까지 유지할지 유효기간 정의.
+                즉] TTL 이 지나면 해당 자료는 자동으로 삭제.
+            stringRedisTemplate.opsForValue( ).set( key , value , 주기값 , TimeUnit.패턴  );
+        3.
 
