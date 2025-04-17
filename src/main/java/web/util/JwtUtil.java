@@ -63,7 +63,7 @@ public class JwtUtil {
                 // (2) 현재 전달받은 토큰과 레디스에 저장된 토큰 비교  , 두 토큰이 같으면
             if( token.equals( redisToken ) ){ return  memail; } // 현재 로그인상태 정상(중복 로그인이 아니다.)
                 // (3) 만약에 두 토큰이 다르면 아래 코드에 null이 리턴된다. ( 토큰 불일치 또는 중복 로그인 감지 )
-            else{  System.out.println(" >> 중복 로그인 감지");  }
+            else{  System.out.println(" >> 중복 로그인 감지 또는 토큰 없음");  }
 
         }catch ( ExpiredJwtException e){
             // 토큰이 만료 되었을때 예외 클래스
@@ -79,7 +79,6 @@ public class JwtUtil {
     public void deleteToken( String memail ){
         stringRedisTemplate.delete( "JWT:"+memail );
     }
-
 } // class end
 
 

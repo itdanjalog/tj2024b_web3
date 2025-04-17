@@ -39,10 +39,11 @@ public class MemberController {
         return memberService.info( token );
     }
 
-    // [4] 로그아웃
+    // [4] 로그아웃 , 로그아웃 할 토큰 가져오기.
     @GetMapping("/logout")
-    public void logout( @RequestParam String memail ){
-        memberService.logout( memail );
+    public void logout(
+        @RequestHeader("Authorization") String token ) {
+        memberService.logout( token );
     }
 
 } // class end

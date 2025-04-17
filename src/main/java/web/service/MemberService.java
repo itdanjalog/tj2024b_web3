@@ -75,7 +75,10 @@ public class MemberService {
     }
 
     // [4] 로그아웃
-    public void logout( String memail ){
+    public void logout( String token ){
+        // 1. 해당 token의 이메일 조회
+        String memail = jwtUtil.validateToken( token );
+        // 2. 조회된 이메일의 redis 토큰 삭제
         jwtUtil.deleteToken( memail );
     }
 }
