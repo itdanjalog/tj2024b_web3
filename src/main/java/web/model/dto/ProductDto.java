@@ -31,20 +31,16 @@ public class ProductDto {
 
     // DTO -> Entity 변환 메소드 (Product 등록 시 사용)
     // 누가(MemberEntity) 어떤 카테고리(CategoryEntity)에 제품(pname, pcontent, pprice)을 등록했는지 정보 필요
-    public ProductEntity toProductEntity(MemberEntity memberEntity, CategoryEntity categoryEntity) {
+    public ProductEntity toEntity() {
         return ProductEntity.builder()
                 .pname(this.pname)
                 .pprice(this.pprice)
                 .pcontent(this.pcontent)
-                .memberEntity(memberEntity) // 작성자 엔티티
-                .categoryEntity(categoryEntity) // 카테고리 엔티티
-                // ProductEntity 생성 시 pview 는 기본값 0으로 설정됨 (@ColumnDefault("0"))
-                // ProductEntity 생성 시 imgEntityList 는 기본값 new ArrayList<>() 로 설정됨 (@Builder.Default)
                 .build();
     }
 
     // Entity -> Dto 변환 메소드 (Product 조회 시 사용 예시)
-    public static ProductDto fromProductEntity(ProductEntity productEntity) {
+    public static ProductDto toDto(ProductEntity productEntity) {
         return ProductDto.builder()
                 .pno(productEntity.getPno())
                 .pname(productEntity.getPname())

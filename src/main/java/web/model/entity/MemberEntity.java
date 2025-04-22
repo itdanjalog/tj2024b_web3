@@ -10,7 +10,7 @@ import java.util.List;
 @Entity @Table(name = "member")
 @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
-public class MemberEntity {
+public class MemberEntity extends BaseTime {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)// 기본키
     private int mno;

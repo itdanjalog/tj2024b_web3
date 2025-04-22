@@ -14,6 +14,4 @@ public interface ImgRepository extends JpaRepository<ImgEntity, Long> {
     // 특정 제품(ProductEntity)에 속한 모든 이미지를 찾는 메소드 (예시)
     List<ImgEntity> findByProductEntity(ProductEntity productEntity);
 
-    // 이미지 파일 이름(iname)으로 이미지를 찾는 메소드 (예시, 고유하다는 보장이 있다면 Optional 사용)
-    // Optional<ImgEntity> findByIname(String iname);
 }

@@ -20,10 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor // final 필드에 대한 생성자 자동 주입 (Lombok)
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final MemberRepository memberRepository; // 작성자 정보 조회
+    private final MemberEntityRepository memberRepository; // 작성자 정보 조회
     private final CategoryRepository categoryRepository; // 카테고리 정보 조회
     private final ImgRepository imgRepository; // 이미지 정보 저장
     private final FileUtil fileUtil; // 파일 처리를 위한 FileUtil 주입
@@ -32,11 +33,10 @@ public class ProductService {
     // @Value("${file.upload.path}")
     // private String uploadPath;
 
-    @Transactional // 트랜잭션 처리 (성공 시 commit, 실패 시 rollback)
-    public boolean registerProduct(ProductDto productDto, int loggedInMemberMno) {
+    public boolean registerProduct(ProductDto productDto, int loginMno) {
 
         // 1. 현재 로그인된 회원 정보 조회 및 확인
-        Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(loggedInMemberMno);
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(loginMno);
         if (optionalMemberEntity.isEmpty()) {
             System.out.println("Error: Member not found.");
             return false; // 회원 정보 없음
@@ -52,7 +52,9 @@ public class ProductService {
         CategoryEntity categoryEntity = optionalCategoryEntity.get();
 
         // 3. ProductDto를 ProductEntity로 변환 (작성자, 카테고리 정보 포함)
-        ProductEntity productEntity = productDto.toProductEntity(memberEntity, categoryEntity);
+        ProductEntity productEntity = productDto.toEntity();
+        productEntity.setMemberEntity( memberEntity );
+        productEntity.setCategoryEntity( categoryEntity );
 
         // 4. ProductEntity 저장 (DB에 저장 후 pno 자동 생성)
         ProductEntity savedProduct = productRepository.save(productEntity);
@@ -92,7 +94,6 @@ public class ProductService {
     }
 
     // --- 1. 전체 또는 카테고리별 제품 조회 ---
-    @Transactional // Lazy Loading 등을 고려
     public List<ProductDto> getAllProducts(Long cno) { // Long 타입으로 받아 null 체크
         List<ProductEntity> productEntities;
 
@@ -109,12 +110,11 @@ public class ProductService {
 
         // 조회된 Entity 리스트를 Dto 리스트로 변환하여 반환
         return productEntities.stream()
-                .map(ProductDto::fromProductEntity) // 정적 메소드 참조
+                .map(ProductDto::toDto) // 정적 메소드 참조
                 .collect(Collectors.toList());
     }
 
     // --- 2. 개별 제품 조회 (pno 기준) ---
-    @Transactional // 조회수 증가 때문에 트랜잭션 사용
     public ProductDto getProductByPno(long pno) {
         Optional<ProductEntity> optionalProductEntity = productRepository.findById(pno);
 
@@ -126,15 +126,14 @@ public class ProductService {
             // productRepository.save(productEntity); // 변경 감지(Dirty Checking)에 의해 @Transactional 내에서는 보통 자동 저장됨
 
             // Entity를 Dto로 변환하여 반환
-            return ProductDto.fromProductEntity(productEntity);
+            return ProductDto.toDto(productEntity);
         } else {
             return null; // 제품이 없을 경우 null 반환
         }
     }
 
     // --- 3. 개별 제품 삭제 (pno 기준) ---
-    @Transactional // 데이터 삭제 및 파일 삭제가 포함되므로 트랜잭션 필수
-    public boolean deleteProduct(long pno, int loggedInMemberMno) {
+    public boolean deleteProduct(long pno, int loginMno) {
         Optional<ProductEntity> optionalProductEntity = productRepository.findById(pno);
 
         if (optionalProductEntity.isEmpty()) {
@@ -145,7 +144,7 @@ public class ProductService {
         ProductEntity productEntity = optionalProductEntity.get();
 
         // 인가 확인: 현재 로그인된 사용자가 제품 작성자인지 확인
-        if (productEntity.getMemberEntity().getMno() != loggedInMemberMno) {
+        if (productEntity.getMemberEntity().getMno() != loginMno) {
             System.out.println("Error: Unauthorized deletion attempt.");
             // 관리자 권한 체크 로직을 추가할 수도 있음
             return false; // 권한 없음
@@ -159,7 +158,7 @@ public class ProductService {
                 // 파일 삭제 실패 시 로그 남기기 (트랜잭션은 계속 진행될 수 있음, 또는 예외 발생시켜 롤백)
                 System.err.println("Failed to delete image file: " + imgEntity.getIname());
                 // 필요시 여기서 RuntimeException 발생시켜 전체 롤백 유도 가능
-                // throw new RuntimeException("Failed to delete associated image file: " + imgEntity.getIname());
+                throw new RuntimeException("Failed to delete associated image file: " + imgEntity.getIname());
             }
         }
 
@@ -171,8 +170,7 @@ public class ProductService {
     }
 
     // --- 4. 개별 이미지 삭제 (ino 기준) ---
-    @Transactional // DB 삭제 및 파일 삭제 포함
-    public boolean deleteProductImage(long ino, int loggedInMemberMno) {
+    public boolean deleteProductImage(long ino, int loginMno) {
         // 1. 이미지 정보 조회
         Optional<ImgEntity> optionalImgEntity = imgRepository.findById(ino);
         if (optionalImgEntity.isEmpty()) {
@@ -190,7 +188,7 @@ public class ProductService {
         }
 
         // 3. 인가 확인: 현재 로그인된 사용자가 제품 작성자인지 확인
-        if (productEntity.getMemberEntity().getMno() != loggedInMemberMno) {
+        if (productEntity.getMemberEntity().getMno() != loginMno) {
             System.out.println("Error: Unauthorized image deletion attempt for ino: " + ino);
             return false; // 권한 없음
         }
@@ -213,8 +211,7 @@ public class ProductService {
         return true; // 이미지 삭제 성공
     }
     // --- 5. 개별 제품 수정 (pno 기준: 이름, 내용, 가격 수정 및 이미지 추가) ---
-    @Transactional // DB 업데이트, 파일 저장, DB 저장 포함
-    public boolean updateProduct(ProductDto productDto , List<MultipartFile> newFiles, int loggedInMemberMno) {
+    public boolean updateProduct(ProductDto productDto ,  int loggedInMemberMno) {
 
         long pno = productDto.getPno();
         // 1. 기존 제품 정보 조회
@@ -231,6 +228,14 @@ public class ProductService {
             return false; // 권한 없음
         }
 
+        // 3. 선택된 카테고리 정보 조회 및 확인
+        Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(productDto.getCno());
+        if (optionalCategoryEntity.isEmpty()) {
+            System.out.println("Error: Category not found.");
+            return false; // 카테고리 정보 없음
+        }
+        CategoryEntity categoryEntity = optionalCategoryEntity.get();
+
         // 3. 제품 정보 업데이트 (이름, 내용, 가격)
         // DTO에서 받은 값이 null이 아니거나 비어있지 않을 때만 업데이트 (선택적)
         // 여기서는 DTO에 값이 있으면 무조건 업데이트한다고 가정
@@ -238,7 +243,9 @@ public class ProductService {
         productEntity.setPcontent(productDto.getPcontent());
         productEntity.setPprice(productDto.getPprice());
         // 참고: category(cno)는 이번 요청에서 수정하지 않음
+        productEntity.setCategoryEntity( categoryEntity );
 
+        List<MultipartFile> newFiles = productDto.getFiles();
         // 4. 새로운 이미지 추가 처리
         if (newFiles != null && !newFiles.isEmpty()) {
             for (MultipartFile file : newFiles) {
