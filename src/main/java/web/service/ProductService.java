@@ -74,11 +74,11 @@ public class ProductService {
     } // class end
 
     // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
-    public List<ProductDto> allProducts( long cno ){
+    public List<ProductDto> allProducts( Long cno ){
         // 1. 조회된 결과를 저장하는 리스트 변수
         List<ProductEntity> productEntityList;
         // 2. cno 에 따라 카테고리별 조회 vs 전체조회
-        if( cno > 0 && cno != null ){  // 2-1 : 카테고리별 조회
+        if( cno != null && cno > 0 ){  // 2-1 : 카테고리별 조회
             productEntityList = productEntityRepository.findByCategoryEntityCno( cno );
         }else{   // 2-2 : 전체 조회
             productEntityList = productEntityRepository.findAll();
@@ -90,6 +90,21 @@ public class ProductService {
     }
 
     // 3. 제품 개별조회 : 설계 : ?pno=1
+    public ProductDto viewProduct( long pno ){
+        // 1. pno 에 해당하는 엔티티 조회
+        Optional< ProductEntity > productEntityOptional =
+            productEntityRepository.findById( pno );
+        // 2. 조회 결과 없으면 null
+        if( productEntityOptional.isEmpty() ) return null;
+        // 3. 조회 결과 있으면 엔티티 꺼내기  .get()
+        ProductEntity productEntity =
+                productEntityOptional.get();
+        // 4. 조회수 증가 , 기존 조회수 호출해서 + 1 결과를 저장
+        productEntity.setPview( productEntity.getPview() +1 );
+        // 5. 조회된 엔티티를 DTO 로 변환
+        return ProductDto.toDto( productEntity );
+    }
+
 
 }
 
