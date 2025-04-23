@@ -20,7 +20,9 @@ import web.model.repository.ProductEntityRepository;
 import web.util.FileUtil;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +72,24 @@ public class ProductService {
         // 7. 성공 반환
         return true;
     } // class end
+
+    // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
+    public List<ProductDto> allProducts( long cno ){
+        // 1. 조회된 결과를 저장하는 리스트 변수
+        List<ProductEntity> productEntityList;
+        // 2. cno 에 따라 카테고리별 조회 vs 전체조회
+        if( cno > 0 && cno != null ){  // 2-1 : 카테고리별 조회
+            productEntityList = productEntityRepository.findByCategoryEntityCno( cno );
+        }else{   // 2-2 : 전체 조회
+            productEntityList = productEntityRepository.findAll();
+        }
+        // 3. 조회한 결과 entity 를 dto 로 변환
+        return productEntityList.stream()
+                .map( ProductDto :: toDto )
+                .collect( Collectors.toList() );
+    }
+
+    // 3. 제품 개별조회 : 설계 : ?pno=1
 
 }
 

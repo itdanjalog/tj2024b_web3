@@ -27,7 +27,16 @@ public class ProductDto {
                 // cno 대신 CategoryEntity 넣기
                 // mno 대신 MemberEntity 넣기
                 .build();
-
+    }
+    // * toDto  : 제품전체조회 , 제품개별 조회 사용.
+    public static ProductDto toDto( ProductEntity productEntity ){
+        return ProductDto.builder()
+                .pname( productEntity.getPname() )
+                .pcontent( productEntity.getPcontent() )
+                .pprice( productEntity.getPprice() )
+                .cno( productEntity.getCategoryEntity().getCno() )
+                // + 내용 추가 예정
+                .build();
     }
 
 }
