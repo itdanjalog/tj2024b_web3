@@ -69,7 +69,8 @@ public class ProductService {
         }
         // 7. 성공 반환
         return true;
-    }
+    } // class end
+
 }
 
 
