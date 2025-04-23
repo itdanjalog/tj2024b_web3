@@ -62,6 +62,25 @@ public class ProductController {
         }
     }
 
+    // 4. 제품 개별삭제 : 설계 : 토큰 , 삭제할제품번호
+    @DeleteMapping("/delete")
+    public ResponseEntity<Boolean> deleteProduct(
+        @RequestHeader("Authorization") String token,
+        @RequestParam int pno ){
+        // 1. 권한 확인
+        int loginMno;
+        try { loginMno = memberService.info(token).getMno();
+        } catch (Exception e) {
+            return ResponseEntity.status( 401 ).body( false );
+        }
+        // 2.
+        boolean result = productService.deleteProduct( pno , loginMno );
+        // 3.
+        if( result == false ) return ResponseEntity.status( 400 ).body( false );
+        // 4.
+        return ResponseEntity.status( 200 ).body( true );
+    }
+
 }
 
 

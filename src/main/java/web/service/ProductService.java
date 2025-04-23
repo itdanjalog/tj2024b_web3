@@ -105,8 +105,53 @@ public class ProductService {
         return ProductDto.toDto( productEntity );
     }
 
+    // 4. 제품 개별삭제 , +이미지 삭제
+    public boolean deleteProduct( long pno , int loginMno ){
+        // 1. pno 에 해당 하는 엔티티 찾기
+        Optional<ProductEntity> productEntityOptional =
+            productEntityRepository.findById( pno );
+        // 2. 없으면 false
+        if( productEntityOptional.isEmpty() ) return false;
+        // 3. 요청한 사람이 등록한 제품인지 확인
+        ProductEntity productEntity = productEntityOptional.get();
+        if( productEntity.getMemberEntity().getMno() != loginMno ){
+            // 만약에 제품 등록한 회원의 번호 와 현재 로그인된 회원번호가 일치하지 않으면 false
+            return false;
+        }
+        // 4. 서버에 저장된 (업로드) 이미지들 삭제
+        List<ImgEntity> imgEntityList = productEntity.getImgEntityList();
+        for( ImgEntity imgEntity : imgEntityList ){
+            boolean result = fileUtil.fileDelete( imgEntity.getIname() ); // web2 작성한 파일삭제 메소드 참고
+            if( result == false ){
+                throw new RuntimeException("파일삭제 실패"); // 트랜잭션 롤백.
+            }
+        }
+        // 5. 이미지 모두 삭제 했으면 제품 DB 삭제 , ?? 이미지 db 는 삭제 코드는 별도로 없다.
+        // cascade = CascadeType.ALL 관계로 제품이 삭제되면 (FK)이미지 레코드로 같이 삭제한다.
+        productEntityRepository.deleteById( pno );
+        return true;
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
