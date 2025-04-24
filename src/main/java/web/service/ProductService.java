@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
+import web.model.dto.CategoryDto;
 import web.model.dto.ProductDto;
 import web.model.entity.CategoryEntity;
 import web.model.entity.ImgEntity;
@@ -164,6 +165,38 @@ public class ProductService {
         }
         return true; // 6. 끝
     } // class end
+
+    // 6. 이미지 개별 삭제
+    public boolean deleteImage( long ino , int loginMno ){
+        // 1. 이미지 엔티티 조회
+        Optional<ImgEntity> optionalImgEntity  = imgEntityRepository.findById( ino );
+        if( optionalImgEntity.isEmpty() ) return false;
+        ImgEntity imgEntity = optionalImgEntity.get();
+        // 2. 인가 확인 , 이미지 등록한 회원 == 제품을 등록한 회원
+        if( imgEntity.getProductEntity().getMemberEntity().getMno() != loginMno ) return false;
+        // 3. 물리적인 로컬 삭제.
+        String deleteFileName = imgEntity.getIname();
+        boolean result = fileUtil.fileDelete( deleteFileName );
+        if( result == false  ) throw new RuntimeException("파일 삭제 실패 ");
+        // 4. 엔티티 삭제 
+        imgEntityRepository.deleteById( ino );
+        return true; // 5. 끝
+    }
+
+
+    // 7. 카테고리 조회
+    public List<CategoryDto> allCategory(){
+        // 1. 모든 카테고리 조회
+        List<CategoryEntity> categoryEntityList = categoryEntityRepository.findAll();
+        // 2. List<Entity> --> List<Dto> 변환
+        List<CategoryDto> categoryDtoList = categoryEntityList.stream()
+                .map( CategoryDto::toDto )
+                .collect( Collectors.toList() );
+        // 3. 끝
+        return categoryDtoList;
+    }
+
+
 }
 
 

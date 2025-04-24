@@ -3,6 +3,7 @@ package web.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import web.model.dto.CategoryDto;
 import web.model.dto.ProductDto;
 import web.model.entity.ProductEntity;
 import web.service.MemberService;
@@ -104,12 +105,25 @@ public class ProductController {
     /*  매핑 : Delete , /product/image , boolean
         매개변수 : 삭제할대상:ino , 권한(token)
      */
-
-
+    @DeleteMapping("/image")
+    public ResponseEntity<Boolean> deleteImage(
+            @RequestParam long ino , @RequestHeader("Authorization") String token ){
+        int loginMno;
+        try{ loginMno = memberService.info( token ).getMno();
+        }catch (Exception e ){ return ResponseEntity.status( 401 ).body(false); }
+        boolean result = productService.deleteImage( ino , loginMno );
+        if( result == false ) ResponseEntity.status( 400).body( false );
+        return ResponseEntity.status( 200 ).body( true  );
+    }
     // 7. 카테고리 조회
     /* 매핑 : Get , /product/category , List<CategoryDto>
         매개변수 : x
      */
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryDto> > allCategory(){
+        List< CategoryDto > categoryDtoList = productService.allCategory();
+        return ResponseEntity.status( 200 ).body( categoryDtoList );
+    }
 
 
     // 2. 검색+페이징처리 , 위에서 작업한 2번 메소드 주석처리 후 진행. ( + 웹/앱 : 무한스크롤 )
