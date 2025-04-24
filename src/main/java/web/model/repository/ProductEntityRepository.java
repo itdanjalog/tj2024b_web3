@@ -33,7 +33,7 @@ public interface ProductEntityRepository
     // @Query( value = "SQL 작성" , nativeQuery = true )
     // SQL 문에서 매개변수 사용시 매개변수앞에 :(콜론)
     @Query( value = "SELECT * FROM product " +
-            " WHERE ( :cno IS NULL OR :cno = 0 OR cno :cno ) " + // java == null vs sql : IS NULL
+            " WHERE ( :cno IS NULL OR :cno = 0 OR cno = :cno ) " + // java == null vs sql : IS NULL
             " AND ( :keyword IS NULL OR pname LIKE %:keyword% )" , nativeQuery = true)
     Page<ProductEntity> findBySearch( Long cno , String keyword , Pageable pageable );
 
