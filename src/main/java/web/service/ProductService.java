@@ -132,6 +132,38 @@ public class ProductService {
         return true;
     }
 
+    // 5. 제품 수정 ( + 이미지 추가 )
+    public boolean updateProduct( ProductDto productDto , int loginMno ){
+        // 1. 기존의 제품 정보(엔티티) 가져오기 // 없으면 취소 // Optional 클래스는 null 제어 메소드 제공
+        Optional< ProductEntity > productEntityOptional = productEntityRepository.findById( productDto.getPno() );
+        if( productEntityOptional.isEmpty() ) return false; // 조회 엔티티가 없으면
+        ProductEntity productEntity = productEntityOptional.get();
+        // 2. 현재 토큰(로그인) 사람의 등록한 제품인지 인가확인   // 아니면 취소
+        if( productEntity.getMemberEntity().getMno() != loginMno ) return false;
+        // 3. 현재 수정할 카테고리 엔티티 가져오기   // 없으면 취소
+        Optional<CategoryEntity> categoryEntityOptional = categoryEntityRepository.findById( productDto.getCno() );
+        if( categoryEntityOptional.isEmpty() ) return false;
+        CategoryEntity categoryEntity = categoryEntityOptional.get();
+        // 4. 제품 정보를 수정한다.  // 오류 발생시 롤백한다.    // - 조회한 기존의 제품 정보(엔티티) 에서 set 이용한 수정
+        productEntity.setPname( productDto.getPname() );
+        productEntity.setPcontent( productDto.getPcontent() );
+        productEntity.setPprice( productDto.getPprice() );
+        productEntity.setCategoryEntity( categoryEntity ); // 찾은 엔티티
+        // 5. 새로운 이미지가 있으면 fileUtil 에서 업로드함수 이용하여 업로드한다.  // 오류 발생시 롤백한다.
+        List< MultipartFile > newFile = productDto.getFiles();
+        if( newFile != null && !newFile.isEmpty() ){ // 새로운 이미지가 존재하면
+            for( MultipartFile file : newFile ){
+                String saveFileName = fileUtil.fileUpload( file );
+                if( saveFileName == null ) throw new RuntimeException("파일 업로드 오류발생"); // throw new 예외클래스명(); // 강제 예외 발생했다.
+                ImgEntity imgEntity = ImgEntity.builder() // 이미지 엔티티 생성 , , 자바객체 <--영속X--> DB테이블레코드
+                        .iname( saveFileName)
+                        .productEntity( productEntity )
+                        .build();
+                imgEntityRepository.save( imgEntity ); // 이미지 엔티티 저장(영속) , 자바객체 <--영속O--> DB테이블레코드
+            }
+        }
+        return true; // 6. 끝
+    } // class end
 }
 
 

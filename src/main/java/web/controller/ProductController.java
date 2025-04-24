@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.model.dto.ProductDto;
+import web.model.entity.ProductEntity;
 import web.service.MemberService;
 import web.service.ProductService;
 
@@ -80,6 +81,41 @@ public class ProductController {
         // 4.
         return ResponseEntity.status( 200 ).body( true );
     }
+
+    // 5. 제품 수정 ( + 이미지 추가 )
+    /*  매핑 : Put , /product/update , boolean
+    *   매개변수 : 수정할값:( pname , pcontent , pprice , cno , files ) , 수정할대상:pno , 권한(token)
+    * */
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> updateProduct(
+            @RequestHeader("Authorization") String token ,
+            @ModelAttribute ProductDto productDto ){
+        // 1. 토큰의 mno 추출
+        int loginMno ;
+        try{  loginMno = memberService.info( token ).getMno();
+        }catch (Exception e ){ return ResponseEntity.status( 401 ).body( false ); }
+        // 2. 수정 서비스 호출
+        boolean result =  productService.updateProduct( productDto , loginMno );
+        if( result == false ) return ResponseEntity.status( 400 ).body( false );
+        return ResponseEntity.status( 200 ).body( true  );
+    }
+
+    // 6. 이미지 개별 삭제
+    /*  매핑 : Delete , /product/image , boolean
+        매개변수 : 삭제할대상:ino , 권한(token)
+     */
+
+
+    // 7. 카테고리 조회
+    /* 매핑 : Get , /product/category , List<CategoryDto>
+        매개변수 : x
+     */
+
+
+    // 2. 검색+페이징처리 , 위에서 작업한 2번 메소드 주석처리 후 진행. ( + 웹/앱 : 무한스크롤 )
+    /*  매핑 : Get , /product/all , List<ProductDto>
+        매개변수 : cno(없으면전체조회) , page(현재페이지번호없으면1페이지) , keyword(없으면전체조회)
+    */
 
 }
 
