@@ -45,13 +45,13 @@ public class ProductController {
         return ResponseEntity.status( 201 ).body( true ); // 201 (저장) 요청성공 과 true 반환
     } // f end
 
-    // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
-    @GetMapping("/all")
-    public ResponseEntity< List<ProductDto> > allProducts(
-            @RequestParam( required = false) long cno){ // required = false : cno 는 필수는 아니다 뜻.
-        List<ProductDto> productDtoList = productService.allProducts( cno );
-        return ResponseEntity.status( 200 ).body( productDtoList ); // 200 성공 과 값 반환
-    }
+//    // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
+//    @GetMapping("/all")
+//    public ResponseEntity< List<ProductDto> > allProducts(
+//            @RequestParam( required = false) long cno){ // required = false : cno 는 필수는 아니다 뜻.
+//        List<ProductDto> productDtoList = productService.allProducts( cno );
+//        return ResponseEntity.status( 200 ).body( productDtoList ); // 200 성공 과 값 반환
+//    }
 
     // 3. 제품 개별조회 : 설계 : ?pno=1
     @GetMapping("/view")
@@ -130,7 +130,15 @@ public class ProductController {
     /*  매핑 : Get , /product/all , List<ProductDto>
         매개변수 : cno(없으면전체조회) , page(현재페이지번호없으면1페이지) , keyword(없으면전체조회)
     */
-
+    @GetMapping("/all")
+    public ResponseEntity< List<ProductDto> > allProducts(
+            @RequestParam( required = false ) Long cno , //  cno : 카테고리 번호 , long(기본타입)  Long(참조타입)
+            @RequestParam( defaultValue = "1" ) int page , // page : 조회할 현재페이지 번호 , defaultValue="기본값"
+            @RequestParam( defaultValue = "5") int size ,  // size : 페이지당 게시물수
+            @RequestParam( required = false ) String keyword ){  // keyword : (제품명) 검색어
+        List<ProductDto> productDtoList = productService.allProducts( cno , page, size , keyword );
+        return ResponseEntity.status( 200 ).body( productDtoList );
+    }
 }
 
 

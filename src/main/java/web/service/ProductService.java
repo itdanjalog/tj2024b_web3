@@ -2,6 +2,10 @@ package web.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -74,21 +78,21 @@ public class ProductService {
         return true;
     } // class end
 
-    // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
-    public List<ProductDto> allProducts( Long cno ){
-        // 1. 조회된 결과를 저장하는 리스트 변수
-        List<ProductEntity> productEntityList;
-        // 2. cno 에 따라 카테고리별 조회 vs 전체조회
-        if( cno != null && cno > 0 ){  // 2-1 : 카테고리별 조회
-            productEntityList = productEntityRepository.findByCategoryEntityCno( cno );
-        }else{   // 2-2 : 전체 조회
-            productEntityList = productEntityRepository.findAll();
-        }
-        // 3. 조회한 결과 entity 를 dto 로 변환
-        return productEntityList.stream()
-                .map( ProductDto :: toDto )
-                .collect( Collectors.toList() );
-    }
+//    // 2. (카테고리별) 제품 전체조회 : 설계 : (카테고리조회)?cno=3  , (전체조회)?cno
+//    public List<ProductDto> allProducts( Long cno ){
+//        // 1. 조회된 결과를 저장하는 리스트 변수
+//        List<ProductEntity> productEntityList;
+//        // 2. cno 에 따라 카테고리별 조회 vs 전체조회
+//        if( cno != null && cno > 0 ){  // 2-1 : 카테고리별 조회
+//            productEntityList = productEntityRepository.findByCategoryEntityCno( cno );
+//        }else{   // 2-2 : 전체 조회
+//            productEntityList = productEntityRepository.findAll();
+//        }
+//        // 3. 조회한 결과 entity 를 dto 로 변환
+//        return productEntityList.stream()
+//                .map( ProductDto :: toDto )
+//                .collect( Collectors.toList() );
+//    }
 
     // 3. 제품 개별조회 : 설계 : ?pno=1
     public ProductDto viewProduct( long pno ){
@@ -194,6 +198,21 @@ public class ProductService {
                 .collect( Collectors.toList() );
         // 3. 끝
         return categoryDtoList;
+    }
+
+    // 2. 검색+페이징처리 , 위에서 작업한 2번 메소드 주석처리 후 진행
+    public List<ProductDto> allProducts( Long cno , int page , int size , String keyword ){
+        // 1. 페이징처리 설정 ,  page-1 : 1페이지를 0으로 사용하므로 -1  , size : 페이지당자료개수 , pno 기준으로 내림차순
+        Pageable pageable = PageRequest.of( page-1 , size , Sort.by(  Sort.Direction.DESC , "pno ")  );
+        // Pageable : 인터페이스 ,  import org.springframework.data.domain.Pageable;
+        // PageRequest : 클래스(구현체)   // .of( 페이지번호[0부터] , 페이지별자료수 , 정렬 )
+        // 2. 내가 만든 네이티브 쿼리로 엔티티 조회
+            // 예시] 전체조회 productEntityRepository.findAll( pageable );
+            // 예시] 카테고리별조회 : productEntityRepository.만든함수명( pageable );
+        Page<ProductEntity> productEntities = productEntityRepository.findBySearch( cno , keyword , pageable );
+        // 3. 반환타입
+        List<ProductDto> productDtoList = productEntities.stream().map( ProductDto::toDto ).collect( Collectors.toList() );
+        return productDtoList; // 4. 끝
     }
 
 
